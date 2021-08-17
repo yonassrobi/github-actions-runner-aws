@@ -1,11 +1,21 @@
 #!/bin/bash
 set -ex
-
 # install dependencies
 apt-get update
 apt-get -qq -y install --no-install-recommends \
-    ca-certificates curl tar git \
+    ca-certificates curl tar git lsb-release gnupg \
     libyaml-dev build-essential jq uuid-runtime
+
+# add docker apt key
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+# Add docker apt repo
+echo \
+    "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+    $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+# do the docker install
+apt-get update
+apt-get -qq -y install --no-install-recommends \
+    docker-ce docker-ce-cli containerd.io
 
 # Install our user and create directory to install actions-runner and the hostedtoolcache
 addgroup --gid 1000 "${RUNGROUP}" && adduser --uid 1000 --ingroup "${RUNGROUP}" --shell /bin/bash "${RUNUSER}"

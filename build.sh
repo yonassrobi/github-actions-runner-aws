@@ -15,7 +15,8 @@ echo \
 # do the docker install
 apt-get update
 apt-get -qq -y install --no-install-recommends \
-    docker-ce docker-ce-cli containerd.io
+    docker-ce docker-ce-cli containerd.io \
+    docker-ce-rootless-extras uidmap
 
 # Install our user and create directory to install actions-runner and the hostedtoolcache
 addgroup --gid 1000 "${RUNGROUP}" && adduser --uid 1000 --ingroup "${RUNGROUP}" --shell /bin/bash "${RUNUSER}"

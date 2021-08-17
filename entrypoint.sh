@@ -1,24 +1,33 @@
 #!/bin/bash
-set -ex
+set -ex -o errexit -o pipefail -o nounset
 
-mkdir work-dir
-cd actions-runner
+setup_docker() {
+  dockerd-rootless-setuptool.sh install --skip-iptables
+  export XDG_RUNTIME_DIR=/home/runner/.docker/run
+  export PATH=/usr/bin:$PATH
+  export DOCKER_HOST=unix:///home/runner/.docker/run/docker.sock
+}
 
-# Grab a runner registration token
-REGISTRATION_TOKEN=$(curl -s -X POST \
-    -H "Authorization: token ${PERSONAL_ACCESS_TOKEN}" \
-    "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/runners/registration-token" | jq -r .token)
+register_runner() {
+  mkdir work-dir
+  cd actions-runner
 
-UNIQUE_ID=$(uuidgen)
+  # Grab a runner registration token
+  REGISTRATION_TOKEN=$(curl -s -X POST \
+      -H "Authorization: token ${PERSONAL_ACCESS_TOKEN}" \
+      "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/runners/registration-token" | jq -r .token)
 
-# Register the runner
-./config.sh \
-      --unattended \
-      --url "https://github.com/${REPO_OWNER}/${REPO_NAME}" \
-      --token "${REGISTRATION_TOKEN}" \
-      --name "${UNIQUE_ID}" \
-      --work ../work-dir \
-      --replace
+  UNIQUE_ID=$(uuidgen)
+
+  # Register the runner
+  ./config.sh \
+        --unattended \
+        --url "https://github.com/${REPO_OWNER}/${REPO_NAME}" \
+        --token "${REGISTRATION_TOKEN}" \
+        --name "${UNIQUE_ID}" \
+        --work ../work-dir \
+        --replace
+}
 
 cleanup() {
   # give the job a second to finish
@@ -34,5 +43,8 @@ cleanup() {
 }
 
 # Run cleanup upon exit. exit upon one job ran
+setup_docker
 trap cleanup EXIT
+register_runner
+
 ./run.sh --once

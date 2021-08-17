@@ -8,5 +8,28 @@ jobs:
     name: Testing self-hosted tag
     runs-on: self-hosted
     steps:
-      - name: step 1
-        run: echo "Hello World!"
+      - uses: actions/checkout@v2
+      - name: Create env var for docker tag
+        run: echo "TAG=$(date +%s)" >> "$GITHUB_ENV"
+      - name: Create env var for git sha tag
+        run: echo "HASH=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
+      - name: Create env var for ECR repo
+        run:  echo "ECR_REPOSITORY=github-runner" >> "$GITHUB_ENV"
+      - name: Configure AWS Credentials
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: "us-east-1"
+        uses: aws-actions/configure-aws-credentials@v1
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build the Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: docker build . --file Dockerfile --tag $ECR_REGISTRY/$ECR_REPOSITORY:${TAG} --tag $ECR_REGISTRY/$ECR_REPOSITORY:latest --tag $ECR_REGISTRY/$ECR_REPOSITORY:${HASH}
+      - name: Run Dockle for docker best practices
+        uses: hands-lab/dockle-action@v1
+        with:
+          image: '${{steps.login-ecr.outputs.registry}}/${{env.ECR_REPOSITORY}}:${{env.HASH}}'
+          exit-code: '1'

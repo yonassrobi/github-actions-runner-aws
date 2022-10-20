@@ -54,6 +54,23 @@ jobs:
           path: scans/trivy/asff/trivy-asff.json
           if-no-files-found: ignore
 
+
+      # Inspec -------------
+
+      - name: Make inspec directories
+        run: mkdir -p scans/inspec/hdf scans/inspec/asff
+
+      - name: Run nspec profiles
+        run: touch scans/trivy/asff/inspec-asff.json
+
+      - name: Upload Inspec ASFF
+        uses: actions/upload-artifact@v3
+        with:
+          name: inspec
+          path: scans/inspec/asff/inspec-asff.json
+          if-no-files-found: ignore
+
+
       # Dockle -------------
 
       - name: Make Dockle directories
@@ -93,6 +110,7 @@ jobs:
           echo $TOOL_NAMES
           ls -R scans
           echo "::set-output name=matrix::$TOOL_NAMES"
+
 
   add-product-name:
     runs-on: ubuntu-latest

@@ -3,7 +3,7 @@ name: Build and push security runner image
 on:
   push:
     branches-ignore: # TODO update and make this a reusable workflow
-      - bharvey-security-skip-build
+      - yonas-security-skip-build
 
 jobs:
   set-runner-uuid:

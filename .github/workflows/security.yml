@@ -69,6 +69,9 @@ jobs:
       - name: Run inspec profiles
         run: inspec init profile inspec-workshop --chef-license accept
 
+      - name: Run additional inspec profile
+        run: inspec exec https://github.com/Staggerlee011/s3-bp-benchmark/archive/master.tar.gz --t aws:// --reporter=cli json:scans/inspec/asff/inspec-asff.json
+
       - name: Upload Inspec ASFF
         uses: actions/upload-artifact@v3
         with:

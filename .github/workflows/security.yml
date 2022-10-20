@@ -3,26 +3,10 @@ name: Run security scans
 on:
   push:
     branches:
-      - bharvey-security-skip-build
+      - yonas-security-skip-build
 
 jobs:
-  # start-runners:
-  #   name: Provision self-hosted runners
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Configure AWS credentials
-  #       uses: aws-actions/configure-aws-credentials@v1
-  #       with:
-  #         aws-region: us-east-1
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-  #     - name: Scale up ECS service
-  #       uses: Enterprise-CMCS/ecs-scale-service@bharvey-refactor
-  #       with:
-  #         cluster: gh-runner-6d81a626-1844-5df5-a3e3-cbbbeab84233
-  #         service: gh-runner-6d81a626-1844-5df5-a3e3-cbbbeab84233
-  #         desired-count: 1
+ 
   build:
     runs-on: ubuntu-latest
     outputs:
@@ -125,63 +109,4 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
 
-  # self-hosted-security:
-  #   # needs: start-runners
-  #   runs-on: self-hosted
-  #   timeout-minutes: 5
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-
-  #     - name: Set up Node
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: 16
-
-  #     - name: Get branch name
-  #       shell: bash
-  #       run: echo "::set-output name=branch-name::${GITHUB_REF#refs/heads/}"
-  #       id: get-branch-name
-
-  #     - name: Cache SonarQube
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: /home/runner/.sonar/cache
-  #         key: ${{ runner.os }}-sonarqube
-
-  #     - name: SonarQube scan
-  #       env:
-  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  #         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-  #       run: sonar-scanner -Dsonar.projectKey=mac-fc-github-actions-runner-aws
-
-  #     - name: Run SAF CLI on SonarQube
-  #       uses: mitre/saf_action@v1
-  #       with:
-  #         command_string: "convert sonarqube2hdf -a ${{ secrets.SONAR_TOKEN }} -u ${{ secrets.SONAR_HOST_URL }} -n mac-fc-github-actions-runner-aws -o sonarqube_hdf.json -b ${{ steps.get-branch-name.outputs.branch-name }}"
-
-  #     - name: Upload artifact
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         name: sonarqube-hdf-json
-  #         path: ./sonarqube_hdf.json
-
-  # stop-runners:
-  #   name: Deprovision self-hosted runners
-  #   runs-on: ubuntu-latest
-  #   if: always()
-  #   needs: [start-runners, self-hosted-security]
-  #   steps:
-  #     - name: Configure AWS credentials
-  #       uses: aws-actions/configure-aws-credentials@v1
-  #       with:
-  #         aws-region: us-east-1
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-  #     - name: Scale down ECS service
-  #       uses: Enterprise-CMCS/ecs-scale-service@bharvey-refactor
-  #       with:
-  #         cluster: gh-runner-6d81a626-1844-5df5-a3e3-cbbbeab84233
-  #         service: gh-runner-6d81a626-1844-5df5-a3e3-cbbbeab84233
-  #         desired-count: 0
+  

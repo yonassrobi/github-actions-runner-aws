@@ -64,7 +64,7 @@ jobs:
         run: curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec
 
       - name: Run inspec 
-        run: touch scans/trivy/asff/inspec-asff.json
+        run: touch scans/inspec/asff/inspec-asff.json
 
       - name: Run inspec profiles
         run: inspec init profile inspec-workshop --chef-license accept

@@ -12,8 +12,6 @@ RUN \
     # install sonar scanner
     curl -sL https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip -o sonar-scanner.zip \
     && unzip sonar-scanner.zip \
-    # install inspec
-    && curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec \
     # install runner
     && curl -sL --create-dirs -o "actions-runner-linux-x64-${ACTIONS_VERSION}.tar.gz" "https://github.com/actions/runner/releases/download/v${ACTIONS_VERSION}/actions-runner-linux-x64-${ACTIONS_VERSION}.tar.gz" \
     && mkdir runner \

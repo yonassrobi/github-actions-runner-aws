@@ -63,8 +63,11 @@ jobs:
       - name: Install inspec 
         run: curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec
 
-      - name: Run inspec profiles
+      - name: Run inspec 
         run: touch scans/trivy/asff/inspec-asff.json
+
+      - name: Run inspec profiles
+        run: inspec init profile inspec-workshop --overwrite
 
       - name: Upload Inspec ASFF
         uses: actions/upload-artifact@v3

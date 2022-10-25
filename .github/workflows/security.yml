@@ -70,11 +70,11 @@ jobs:
         run: inspec init profile inspec-workshop --chef-license accept
 
       - name: Run additional inspec profile
-        run: echo "s3_name:aws-cms-oit-iusg-spe-cmcs-macbis-test-tf-state-us-east-1" > input.yml && inspec exec https://github.com/Staggerlee011/s3-bp-benchmark/archive/master.tar.gz --t aws://region/default --input-file=input.yml --reporter=cli json:scans/inspec/hdf/inspec-asff.json
-        with:
-          aws-region: us-east-1
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: echo "s3_name:aws-cms-oit-iusg-spe-cmcs-macbis-test-tf-state-us-east-1" > input.yml && export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} && export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} && export AWS_REGION=us-east-1 && inspec exec https://github.com/Staggerlee011/s3-bp-benchmark/archive/master.tar.gz --t aws:// --input-file=input.yml --reporter=cli json:scans/inspec/hdf/inspec-asff.json
+        #with:
+        #  aws-region: us-east-1
+        #  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        #  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       #- name: Run aws foundations profile
       #  run: inspec exec https://github.com/CMSgov/cms-ars-3.1-moderate-aws-foundations-cis-overlay/archive/master.tar.gz --input-file=<path_to_your_inputs_file/name_of_your_inputs_file.yml> --target aws:// --reporter=cli json:out.json
 

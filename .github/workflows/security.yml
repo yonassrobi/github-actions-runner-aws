@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: inspec
-          path: scans/inspec/asff/inspec-asff.json
+          path: scans/inspec/**/*asff*.json
           if-no-files-found: ignore
       
       # Trivy -------------

@@ -38,8 +38,13 @@ jobs:
         run: curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec
 
       - name: Run additional inspec profile
-        run: export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} && export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} && export AWS_REGION=us-east-1 && inspec exec https://github.com/Staggerlee011/s3-bp-benchmark/archive/master.tar.gz -t aws:// --input s3_name=aws-cms-oit-iusg-spe-cmcs-macbis-test-tf-state-us-east-1 --reporter=cli json:scans/inspec/hdf/inspec-asff.json --chef-license accept
-        
+        run: export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} && export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} && export AWS_REGION=us-east-1 && inspec exec https://github.com/Staggerlee011/s3-bp-benchmark/archive/master.tar.gz -t aws:// --input s3_name=aws-cms-oit-iusg-spe-cmcs-macbis-test-tf-state-us-east-1 --reporter=cli json:scans/inspec/hdf/inspec-hdf.json --chef-license accept
+      
+      - name: Convert Inspec HDF to ASFF
+        uses: mitre/saf_action@v1
+        with:
+          command_string: "convert hdf2asff -i scans/inspec/hdf/inspec-hdf.json -a 156322662943 -r us-east-1 -t dockle -o scans/inspec/asff"
+      
       - name: Upload Inspec ASFF
         uses: actions/upload-artifact@v3
         with:
